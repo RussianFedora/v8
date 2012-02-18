@@ -1,0 +1,42 @@
+--- SConstruct	2011-08-16 10:06:48.223242263 +0200
+--- SConstruct	2011-08-16 10:06:48.223242263 +0200
+@@ -80,7 +80,6 @@
+   'gcc': {
+     'all': {
+       'CCFLAGS':      ['$DIALECTFLAGS', '$WARNINGFLAGS'],
+-      'CXXFLAGS':     ['-fno-rtti', '-fno-exceptions'],
+     },
+     'visibility:hidden': {
+       # Use visibility=default to disable this.
+@@ -405,7 +404,6 @@
+     'all': {
+       'LIBPATH':      [abspath('.')],
+       'CCFLAGS':      ['$DIALECTFLAGS', '$WARNINGFLAGS'],
+-      'CXXFLAGS':     ['-fno-rtti', '-fno-exceptions'],
+       'LINKFLAGS':    ['$CCFLAGS'],
+     },
+     'os:linux': {
+@@ -459,7 +457,6 @@
+     'all': {
+       'LIBPATH':      ['.'],
+       'CCFLAGS':      ['$DIALECTFLAGS', '$WARNINGFLAGS'],
+-      'CXXFLAGS':     ['-fno-rtti', '-fno-exceptions'],
+       'LINKFLAGS':    ['$CCFLAGS'],
+     },
+     'os:linux': {
+@@ -638,7 +635,6 @@
+     'all': {
+       'LIBPATH':      ['.'],
+       'CCFLAGS':      ['$DIALECTFLAGS', '$WARNINGFLAGS'],
+-      'CXXFLAGS':     ['-fno-rtti', '-fno-exceptions'],
+       'LINKFLAGS':    ['$CCFLAGS'],
+     },
+     'os:win32': {
+@@ -793,7 +789,6 @@
+   'gcc': {
+     'all': {
+       'CCFLAGS': ['$DIALECTFLAGS', '$WARNINGFLAGS'],
+-      'CXXFLAGS': ['-fno-rtti', '-fno-exceptions'],
+       'LINKFLAGS': ['$CCFLAGS'],
+     },
+     'console:readline': {
