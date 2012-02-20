@@ -14,7 +14,7 @@ Url:            http://code.google.com/p/v8
 Source0:        %{name}.%{version}.tar.lzma
 Patch0:         buildfix.diff
 Patch1:         adjust-buildflags.diff
-BuildRequires:  scons, readline-devel, libicu-devel, ncurses-devel
+BuildRequires:  scons, readline-devel, libicu-devel, ncurses-devel, lzma
 ExclusiveArch:  %{ix86} x86_64 arm
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
