@@ -40,9 +40,11 @@ lzma -cd %{SOURCE0} | tar xf -
 %patch0 -p0
 %patch1 -p0
 
+%if 0%{?rhel} < 7
 # -fno-strict-aliasing is needed with gcc 4.4 to get past some ugly code
 PARSED_OPT_FLAGS=`echo \'%{optflags} \' | sed "s/ /',/g" | sed "s/',/', '/g"`
 sed -i "s|'-O3',|$PARSED_OPT_FLAGS '-fno-strict-aliasing',|g" SConstruct
+%endif
 
 %build
 
