@@ -62,8 +62,12 @@ env=CCFLAGS:"-fPIC"
 rm -rf libv8.so
 rm -rf libv8preparser.so
 # Now, lets make it right.
+%if 0%{?rhel} >= 7 || 0%{?fedora} >= 17
+g++ %{optflags} -fPIC -o libv8preparser.so.%{sover} -shared -Wl,-soname,libv8preparser.so.%{somajor} obj/release/allocation.os obj/release/bignum-dtoa.os obj/release/bignum.os obj/release/cached-powers.os obj/release/conversions.os obj/release/diy-fp.os obj/release/dtoa.os obj/release/fast-dtoa.os obj/release/fixed-dtoa.os obj/release/hashmap.os obj/release/preparse-data.os obj/release/preparser-api.os obj/release/preparser.os obj/release/scanner.os obj/release/strtod.os obj/release/token.os obj/release/unicode.os obj/release/utils.os -lpthread
+%else
 g++ %{optflags} -fPIC -o libv8preparser.so.%{sover} -shared -W1,-soname,libv8preparser.so.%{somajor} obj/release/allocation.os obj/release/bignum-dtoa.os obj/release/bignum.os obj/release/cached-powers.os obj/release/conversions.os obj/release/diy-fp.os obj/release/dtoa.os obj/release/fast-dtoa.os obj/release/fixed-dtoa.os obj/release/hashmap.os obj/release/preparse-data.os obj/release/preparser-api.os obj/release/preparser.os obj/release/scanner.os obj/release/strtod.os obj/release/token.os obj/release/unicode.os obj/release/utils.os -lpthread
 rm obj/release/preparser-api.os
+%endif
 %ifarch arm
 g++ %{optflags} -fPIC -o libv8.so.%{sover} -shared -Wl,-soname,libv8.so.%{somajor} obj/release/*.os obj/release/arm/*.os obj/release/extensions/*.os -lpthread
 %endif
