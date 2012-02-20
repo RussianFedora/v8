@@ -6,7 +6,7 @@
 Summary:        JavaScript Engine
 Name:           v8
 Version:        3.9.1.0
-Release:        1%{?dist}.R
+Release:        2%{?dist}.R
 
 License:        BSD
 Group:          System Environment/Libraries
@@ -17,6 +17,12 @@ Patch1:         adjust-buildflags.diff
 BuildRequires:  scons, readline-devel, libicu-devel, ncurses-devel, lzma
 ExclusiveArch:  %{ix86} x86_64 arm
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
+%ifarch x86_64
+Provides:       libv8preparser.so()(64bit)
+%else
+Provides:       libv8preparser.so
+%endif
 
 %description
 V8 is Google's open source JavaScript engine. V8 is written in C++ and is used
@@ -147,5 +153,8 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Feb 20 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.1.0-2.R
+- ugly Provides hack
+
 * Sat Feb 18 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.1.0-1.R
 - initial build for EL6 from openSUSE
