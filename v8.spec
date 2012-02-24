@@ -5,23 +5,25 @@
 
 Summary:        JavaScript Engine
 Name:           v8
-Version:        3.9.1.0
-Release:        2%{?dist}.R
+Version:        3.9.7.0
+Release:        1%{?dist}.R
 
 License:        BSD
 Group:          System Environment/Libraries
 Url:            http://code.google.com/p/v8
-Source0:        %{name}.%{version}.tar.lzma
+Source0:        http://download.rfremix.ru/storage/chromium/19.0.1046.0/%{name}.%{version}.tar.lzma
 Patch0:         buildfix.diff
 Patch1:         adjust-buildflags.diff
 BuildRequires:  scons, readline-devel, libicu-devel, ncurses-devel, lzma
 ExclusiveArch:  %{ix86} x86_64 arm
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
+%if 0%{?fedora} >= 16
 %ifarch x86_64
 Provides:       libv8preparser.so()(64bit)
 %else
 Provides:       libv8preparser.so
+%endif
 %endif
 
 %description
@@ -153,6 +155,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Feb 22 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.7.0-1.R
+- update to 3.9.7.0
+
 * Mon Feb 20 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.1.0-2.R
 - ugly Provides hack
 
