@@ -1,0 +1,35 @@
+From 503755a1addc229e917f837e212403e03e7bf243 Mon Sep 17 00:00:00 2001
+From: Lubomir Rintel <lkundrak@v3.sk>
+Date: Fri, 10 Dec 2010 16:13:42 +0100
+Subject: [PATCH] Drop shebang where they are useless
+
+jsmin.py is not an executable script and it infuriates rpmlint.
+js2c.py is being called from a wrapper in %{_bindir}
+---
+ tools/js2c.py  |    2 --
+ tools/jsmin.py |    2 --
+ 2 files changed, 0 insertions(+), 4 deletions(-)
+
+diff --git a/tools/js2c.py b/tools/js2c.py
+index 2da132f..c0e014d 100755
+--- a/tools/js2c.py
++++ b/tools/js2c.py
+@@ -1,5 +1,3 @@
+-#!/usr/bin/env python
+-#
+ # Copyright 2006-2008 the V8 project authors. All rights reserved.
+ # Redistribution and use in source and binary forms, with or without
+ # modification, are permitted provided that the following conditions are
+diff --git a/tools/jsmin.py b/tools/jsmin.py
+index 646bf14..e2bb608 100644
+--- a/tools/jsmin.py
++++ b/tools/jsmin.py
+@@ -1,5 +1,3 @@
+-#!/usr/bin/python2.4
+-
+ # Copyright 2009 the V8 project authors. All rights reserved.
+ # Redistribution and use in source and binary forms, with or without
+ # modification, are permitted provided that the following conditions are
+-- 
+1.7.3.1
+

@@ -1,139 +1,162 @@
-%global somajor `echo %{version} | cut -f1 -d'.'`
-%global sominor `echo %{version} | cut -f2 -d'.'`
-%global sobuild `echo %{version} | cut -f3 -d'.'`
+# Hi Googlers! If you're looking in here for patches, nifty.
+# You (and everyone else) are welcome to use any of my Chromium patches under the terms of the GPLv2 or later.
+# You (and everyone else) are welcome to use any of my V8-specific patches under the terms of the BSD license.
+# You (and everyone else) may NOT use my patches under any other terms.
+# I hate to be a party-pooper here, but I really don't want to help Google make a proprietary browser.
+# There are enough of those already.
+# All copyrightable work in these spec files and patches is Copyright 2010 Tom Callaway
+
+# For the 1.2 branch, we use 0s here
+# For 1.3+, we use the three digit versions
+%global somajor 3
+%global sominor 9
+%global sobuild 7
 %global sover %{somajor}.%{sominor}.%{sobuild}
+%{!?python_sitelib: %global python_sitelib %(%{__python} \
+    -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-Summary:        JavaScript Engine
-Name:           v8
-Version:        3.9.7.0
-Release:        1%{?dist}.R
-
-License:        BSD
-Group:          System Environment/Libraries
-Url:            http://code.google.com/p/v8
-Source0:        http://download.rfremix.ru/storage/chromium/19.0.1046.0/%{name}.%{version}.tar.lzma
-Patch0:         buildfix.diff
-Patch1:         adjust-buildflags.diff
-BuildRequires:  scons, readline-devel, libicu-devel, ncurses-devel, lzma
-ExclusiveArch:  %{ix86} x86_64 arm
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-
-%if 0%{?fedora} >= 16
-%ifarch x86_64
-Provides:       libv8preparser.so()(64bit)
-%else
-Provides:       libv8preparser.so
-%endif
-%endif
+Name:       v8
+Version:    %{somajor}.%{sominor}.%{sobuild}.0
+Release:    1%{?dist}.R
+Summary:    JavaScript Engine
+Group:      System Environment/Libraries
+License:    BSD
+URL:        http://code.google.com/p/v8
+# No tarballs, pulled from svn
+# Checkout script is Source1
+Source0:    http://download.rfremix.ru/storage/chromium/19.0.1046.0/v8.%{version}.tar.lzma
+Source1:    v8-daily-tarball.sh
+# Enable experimental i18n extension that chromium needs
+Patch0:     v8-3.3.10-enable-experimental.patch
+# Remove unnecessary shebangs
+Patch3:     v8-2.5.9-shebangs.patch
+BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+ExclusiveArch:    %{ix86} x86_64 arm
+BuildRequires:    scons, readline-devel, libicu-devel
 
 %description
-V8 is Google's open source JavaScript engine. V8 is written in C++ and is used
-in Google Chrome, the open source browser from Google. V8 implements ECMAScript
+V8 is Google's open source JavaScript engine. V8 is written in C++ and is used 
+in Google Chrome, the open source browser from Google. V8 implements ECMAScript 
 as specified in ECMA-262, 3rd edition.
 
 %package devel
-
-Summary:        Development headers and libraries for v8
-Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
+Group:      Development/Libraries
+Summary:    Development headers and libraries for v8
+Requires:   %{name} = %{version}-%{release}
 
 %description devel
 Development headers and libraries for v8.
 
 %prep
-rm -rf %{name}
-lzma -cd %{SOURCE0} | tar xf -
+%setup -q -n %{name}
+#patch0 -p1 -b .experimental
+%patch3 -p1 -b .shebang
 
-%setup -D -T -n %{name}
-%patch0 -p0
-%patch1 -p0
+#sed -i '/break-iterator.cc/d' src/SConscript
+#sed -i '/collator.cc/d' src/SConscript
+sed -i '/extensions\/experimental\//d' src/SConscript
 
-%if 0%{?rhel} < 7
 # -fno-strict-aliasing is needed with gcc 4.4 to get past some ugly code
-PARSED_OPT_FLAGS=`echo \'%{optflags} \' | sed "s/ /',/g" | sed "s/',/', '/g"`
-sed -i "s|'-O3',|$PARSED_OPT_FLAGS '-fno-strict-aliasing',|g" SConstruct
-%endif
+PARSED_OPT_FLAGS=`echo \'$RPM_OPT_FLAGS -fPIC -fno-strict-aliasing -Wno-unused-parameter -Wno-unused-but-set-variable\'| sed "s/ /',/g" | sed "s/',/', '/g"`
+sed -i "s|'-O3',|$PARSED_OPT_FLAGS,|g" SConstruct
+
+# clear spurious executable bits
+find . \( -name \*.cc -o -name \*.h -o -name \*.py \) -a -executable \
+  |while read FILE ; do
+    echo $FILE
+    chmod -x $FILE
+  done
+
 
 %build
-
-scons -j3 library=shared snapshots=on visibility=default mode=release \
+export GCC_VERSION="46"
+export COMPRESSION="off"
+scons library=shared snapshots=on verbose=on \
 %ifarch x86_64
 arch=x64 \
 %endif
-%ifarch arm
-armeabi=hard vfp3=on \
+visibility=default \
+env=CCFLAGS:"-fPIC" \
+%{?_smp_mflags}
+
+%if 0%{?fedora} > 15
+export ICU_LINK_FLAGS=`pkg-config --libs-only-l icu-i18n`
+%else
+export ICU_LINK_FLAGS=`pkg-config --libs-only-l icu`
 %endif
-env=CCFLAGS:"-fPIC"
 
 # When will people learn to create versioned shared libraries by default?
-# first, lets get rid of the old .so
-rm -rf libv8.so
-rm -rf libv8preparser.so
+# first, lets get rid of the old .so file
+rm -rf libv8.so libv8preparser.so
 # Now, lets make it right.
-%if 0%{?rhel} >= 7 || 0%{?fedora} >= 17
-g++ %{optflags} -fPIC -o libv8preparser.so.%{sover} -shared -Wl,-soname,libv8preparser.so.%{somajor} obj/release/allocation.os obj/release/bignum-dtoa.os obj/release/bignum.os obj/release/cached-powers.os obj/release/conversions.os obj/release/diy-fp.os obj/release/dtoa.os obj/release/fast-dtoa.os obj/release/fixed-dtoa.os obj/release/hashmap.os obj/release/preparse-data.os obj/release/preparser-api.os obj/release/preparser.os obj/release/scanner.os obj/release/strtod.os obj/release/token.os obj/release/unicode.os obj/release/utils.os -lpthread
-%else
-g++ %{optflags} -fPIC -o libv8preparser.so.%{sover} -shared -W1,-soname,libv8preparser.so.%{somajor} obj/release/allocation.os obj/release/bignum-dtoa.os obj/release/bignum.os obj/release/cached-powers.os obj/release/conversions.os obj/release/diy-fp.os obj/release/dtoa.os obj/release/fast-dtoa.os obj/release/fixed-dtoa.os obj/release/hashmap.os obj/release/preparse-data.os obj/release/preparser-api.os obj/release/preparser.os obj/release/scanner.os obj/release/strtod.os obj/release/token.os obj/release/unicode.os obj/release/utils.os -lpthread
-rm obj/release/preparser-api.os
-%endif
+g++ $RPM_OPT_FLAGS -fPIC -o libv8preparser.so.%{sover} -shared -Wl,-soname,libv8preparser.so.%{somajor} \
+        obj/release/allocation.os \
+        obj/release/hashmap.os \
+        obj/release/preparse-data.os \
+        obj/release/preparser-api.os \
+        obj/release/preparser.os \
+        obj/release/token.os \
+        obj/release/unicode.os
+
+# "obj/release/preparser-api.os" should not be included in the libv8.so file.
+export RELEASE_BUILD_OBJS=`echo obj/release/*.os | sed 's|obj/release/preparser-api.os||g'`
+
 %ifarch arm
-g++ %{optflags} -fPIC -o libv8.so.%{sover} -shared -Wl,-soname,libv8.so.%{somajor} obj/release/*.os obj/release/arm/*.os obj/release/extensions/*.os -lpthread
+g++ $RPM_OPT_FLAGS -fPIC -o libv8.so.%{sover} -shared -Wl,-soname,libv8.so.%{somajor} $RELEASE_BUILD_OBJS obj/release/extensions/*.os obj/release/arm/*.os $ICU_LINK_FLAGS
 %endif
 %ifarch %{ix86}
-g++ %{optflags} -fPIC -o libv8.so.%{sover} -shared -Wl,-soname,libv8.so.%{somajor} obj/release/*.os obj/release/ia32/*.os obj/release/extensions/*.os -lpthread
+g++ $RPM_OPT_FLAGS -fPIC -o libv8.so.%{sover} -shared -Wl,-soname,libv8.so.%{somajor} $RELEASE_BUILD_OBJS obj/release/extensions/*.os obj/release/ia32/*.os $ICU_LINK_FLAGS
 %endif
 %ifarch x86_64
-g++ %{optflags} -fPIC -o libv8.so.%{sover} -shared -Wl,-soname,libv8.so.%{somajor} obj/release/*.os obj/release/x64/*.os obj/release/extensions/*.os -lpthread
+g++ $RPM_OPT_FLAGS -fPIC -o libv8.so.%{sover} -shared -Wl,-soname,libv8.so.%{somajor} $RELEASE_BUILD_OBJS obj/release/extensions/*.os obj/release/x64/*.os $ICU_LINK_FLAGS
 %endif
 
 # We need to do this so d8 can link against it.
 ln -sf libv8.so.%{sover} libv8.so
 ln -sf libv8preparser.so.%{sover} libv8preparser.so
 
-scons d8 mode=release \
+# This will fail to link d8 because it doesn't use the icu libs.
+scons d8 \
 %ifarch x86_64
 arch=x64 \
 %endif
-%ifarch arm
-armeabi=hard vfp3=on \
-%endif
-library=shared snapshots=on console=readline visibility=default
+library=shared snapshots=on console=readline visibility=default || :
 
 # Sigh. I f*****g hate scons.
 rm -rf d8
 
-g++ %{optflags} -o d8 obj/release/d8.os -lv8 -lpthread -lreadline -L.
+g++ $RPM_OPT_FLAGS -o d8 obj/release/d8.os -lpthread -lreadline -lpthread -L. -lv8 $ICU_LINK_FLAGS
 
 %install
-#%if %suse_version > 1140
-mkdir -p %{buildroot}%{_includedir}/v8/x64
-#%else
+rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_includedir}
-#%endif
 mkdir -p %{buildroot}%{_libdir}
 install -p include/*.h %{buildroot}%{_includedir}
-
-#%if %suse_version > 1140
-install -p src/*.h %{buildroot}%{_includedir}/v8
-install -p src/x64/*.h %{buildroot}%{_includedir}/v8/x64
-#%endif
-
 install -p libv8.so.%{sover} %{buildroot}%{_libdir}
 install -p libv8preparser.so.%{sover} %{buildroot}%{_libdir}
 mkdir -p %{buildroot}%{_bindir}
 install -p -m0755 d8 %{buildroot}%{_bindir}
 
-cd %{buildroot}%{_libdir}
+pushd %{buildroot}%{_libdir}
 ln -sf libv8.so.%{sover} libv8.so
 ln -sf libv8.so.%{sover} libv8.so.%{somajor}
 ln -sf libv8.so.%{sover} libv8.so.%{somajor}.%{sominor}
-ln -sf libv8preparser.so.%{sover} libv8preparser.so.%{somajor}.%{sominor}
-ln -sf libv8preparser.so.%{sover} libv8preparser.so.%{somajor}
 ln -sf libv8preparser.so.%{sover} libv8preparser.so
+ln -sf libv8preparser.so.%{sover} libv8preparser.so.%{somajor}
+ln -sf libv8preparser.so.%{sover} libv8preparser.so.%{somajor}.%{sominor}
+popd
 
 chmod -x %{buildroot}%{_includedir}/v8*.h
 
-rm -rf %{buildroot}%{_datadir}/doc/libv8*
+mkdir -p %{buildroot}%{_includedir}/v8/extensions/experimental/
+install -p src/extensions/*.h %{buildroot}%{_includedir}/v8/extensions/
+
+chmod -x %{buildroot}%{_includedir}/v8/extensions/*.h
+
+# install Python JS minifier scripts for nodejs
+install -d %{buildroot}%{python_sitelib}
+install -p -m0744 tools/jsmin.py %{buildroot}%{python_sitelib}/
+chmod -R -x %{buildroot}%{python_sitelib}/*.py*
 
 %clean
 rm -rf %{buildroot}
@@ -150,16 +173,20 @@ rm -rf %{buildroot}
 
 %files devel
 %defattr(-,root,root,-)
-%{_includedir}/*
+%{_includedir}/*.h
+%{_includedir}/v8/extensions/
 %{_libdir}/*.so
-
+%{python_sitelib}/j*.py*
 
 %changelog
-* Wed Feb 22 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.7.0-1.R
-- update to 3.9.7.0
+* Fri Feb 24 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.7.0-2.R
+- sync spec with fedora one
 
-* Mon Feb 20 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.1.0-2.R
-- ugly Provides hack
-
-* Sat Feb 18 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.1.0-1.R
+* Wed Feb 22 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.7.0-1.R                                                                                                     
+- update to 3.9.7.0                                                                                                                                                           
+                                                                                                                                                                              
+* Mon Feb 20 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.1.0-2.R                                                                                                     
+- ugly Provides hack                                                                                                                                                          
+                                                                                                                                                                              
+* Sat Feb 18 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.1.0-1.R                                                                                                     
 - initial build for EL6 from openSUSE
