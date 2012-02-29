@@ -17,7 +17,7 @@
 
 Name:       v8
 Version:    %{somajor}.%{sominor}.%{sobuild}.0
-Release:    1%{?dist}.R
+Release:    1%{?dist}
 Summary:    JavaScript Engine
 Group:      System Environment/Libraries
 License:    BSD
