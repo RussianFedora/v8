@@ -10,7 +10,7 @@
 # For 1.3+, we use the three digit versions
 %global somajor 3
 %global sominor 9
-%global sobuild 7
+%global sobuild 13
 %global sover %{somajor}.%{sominor}.%{sobuild}
 %{!?python_sitelib: %global python_sitelib %(%{__python} \
     -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
@@ -24,7 +24,7 @@ License:    BSD
 URL:        http://code.google.com/p/v8
 # No tarballs, pulled from svn
 # Checkout script is Source1
-Source0:    http://download.rfremix.ru/storage/chromium/19.0.1046.0/v8.%{version}.tar.lzma
+Source0:    v8.%{version}.tar.lzma
 Source1:    v8-daily-tarball.sh
 # Enable experimental i18n extension that chromium needs
 Patch0:     v8-3.3.10-enable-experimental.patch
@@ -179,6 +179,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/j*.py*
 
 %changelog
+* Wed Mar  7 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.13.0-1.R
+- update to 3.9.13.0
+
 * Fri Feb 24 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.7.0-2.R
 - sync spec with fedora one
 
