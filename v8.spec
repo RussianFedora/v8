@@ -89,15 +89,27 @@ export ICU_LINK_FLAGS=`pkg-config --libs-only-l icu`
 # first, lets get rid of the old .so file
 rm -rf libv8.so libv8preparser.so
 # Now, lets make it right.
-g++ $RPM_OPT_FLAGS -fPIC -o libv8preparser.so.%{sover} -shared -Wl,-soname,libv8preparser.so.%{somajor} \
+
+g++    %{optflags} -fPIC -o libv8preparser.so.%{sover} -shared -W1,-soname,libv8preparser.so.%{somajor} \
         obj/release/allocation.os \
-        obj/release/hashmap.os \
+        obj/release/bignum-dtoa.os \
+        obj/release/bignum.os \
+        obj/release/cached-powers.os \
+        obj/release/conversions.os \
+        obj/release/diy-fp.os \
+        obj/release/dtoa.os \
+        obj/release/fast-dtoa.os \
+        obj/release/fixed-dtoa.os \
         obj/release/preparse-data.os \
         obj/release/preparser-api.os \
         obj/release/preparser.os \
+        obj/release/scanner.os \
+        obj/release/strtod.os \
         obj/release/token.os \
-        obj/release/unicode.os
-
+        obj/release/unicode.os \
+        obj/release/utils.os \
+        -lpthread
+ 
 # "obj/release/preparser-api.os" should not be included in the libv8.so file.
 export RELEASE_BUILD_OBJS=`echo obj/release/*.os | sed 's|obj/release/preparser-api.os||g'`
 
