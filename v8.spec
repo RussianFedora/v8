@@ -17,7 +17,7 @@
 
 Name:       v8
 Version:    %{somajor}.%{sominor}.%{sobuild}.0
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    JavaScript Engine
 Group:      System Environment/Libraries
 License:    BSD
@@ -90,25 +90,13 @@ export ICU_LINK_FLAGS=`pkg-config --libs-only-l icu`
 rm -rf libv8.so libv8preparser.so
 # Now, lets make it right.
 
-g++    %{optflags} -fPIC -o libv8preparser.so.%{sover} -shared -Wl,-soname,libv8preparser.so.%{somajor} \
+g++ $RPM_OPT_FLAGS -fPIC -o libv8preparser.so.%{sover} -shared -Wl,-soname,libv8preparser.so.%{somajor} \
         obj/release/allocation.os \
-        obj/release/bignum-dtoa.os \
-        obj/release/bignum.os \
-        obj/release/cached-powers.os \
-        obj/release/conversions.os \
-        obj/release/diy-fp.os \
-        obj/release/dtoa.os \
-        obj/release/fast-dtoa.os \
-        obj/release/fixed-dtoa.os \
         obj/release/preparse-data.os \
         obj/release/preparser-api.os \
         obj/release/preparser.os \
-        obj/release/scanner.os \
-        obj/release/strtod.os \
         obj/release/token.os \
-        obj/release/unicode.os \
-        obj/release/utils.os \
-        -lpthread
+        obj/release/unicode.os
  
 # "obj/release/preparser-api.os" should not be included in the libv8.so file.
 export RELEASE_BUILD_OBJS=`echo obj/release/*.os | sed 's|obj/release/preparser-api.os||g'`
@@ -191,6 +179,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/j*.py*
 
 %changelog
+* Wed Mar  7 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.13.0-2
+- update build options
+
 * Wed Mar  7 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.13.0-1.R
 - update to 3.9.13.0
 
