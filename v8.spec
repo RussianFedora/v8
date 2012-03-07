@@ -90,7 +90,7 @@ export ICU_LINK_FLAGS=`pkg-config --libs-only-l icu`
 rm -rf libv8.so libv8preparser.so
 # Now, lets make it right.
 
-g++    %{optflags} -fPIC -o libv8preparser.so.%{sover} -shared -W1,-soname,libv8preparser.so.%{somajor} \
+g++    %{optflags} -fPIC -o libv8preparser.so.%{sover} -shared -Wl,-soname,libv8preparser.so.%{somajor} \
         obj/release/allocation.os \
         obj/release/bignum-dtoa.os \
         obj/release/bignum.os \
