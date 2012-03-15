@@ -10,14 +10,14 @@
 # For 1.3+, we use the three digit versions
 %global somajor 3
 %global sominor 9
-%global sobuild 13
+%global sobuild 19
 %global sover %{somajor}.%{sominor}.%{sobuild}
 %{!?python_sitelib: %global python_sitelib %(%{__python} \
     -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:       v8
 Version:    %{somajor}.%{sominor}.%{sobuild}.0
-Release:    2%{?dist}
+Release:    1%{?dist}
 Summary:    JavaScript Engine
 Group:      System Environment/Libraries
 License:    BSD
@@ -179,6 +179,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/j*.py*
 
 %changelog
+* Thu Mar 15 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.19.0-1
+- update to 3.9.19.0
+
 * Wed Mar  7 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.13.0-2
 - update build options
 
