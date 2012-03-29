@@ -45,7 +45,7 @@ as specified in ECMA-262, 3rd edition.
 %package devel
 Group:      Development/Libraries
 Summary:    Development headers and libraries for v8
-Requires:   %{name} = %{version}-%{release}
+Requires:   %{name} = %{?epoch}:%{version}-%{release}
 
 %description devel
 Development headers and libraries for v8.
