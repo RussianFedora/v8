@@ -17,7 +17,10 @@
 
 Name:       v8
 Version:    %{somajor}.%{sominor}.%{sobuild}.1
-Release:    1%{?dist}
+%if 0%{?fedora} >= 17
+Epoch:      1
+%endif
+Release:    2%{?dist}
 Summary:    JavaScript Engine
 Group:      System Environment/Libraries
 License:    BSD
@@ -179,6 +182,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/j*.py*
 
 %changelog
+* Thu Mar 29 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.24.1-2
+- bump epoch for fedora >= 17
+
 * Wed Mar 28 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.24.1-1
 - update to 3.9.24.1
 
