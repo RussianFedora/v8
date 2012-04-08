@@ -9,18 +9,18 @@
 # For the 1.2 branch, we use 0s here
 # For 1.3+, we use the three digit versions
 %global somajor 3
-%global sominor 9
-%global sobuild 24
+%global sominor 10
+%global sobuild 0
 %global sover %{somajor}.%{sominor}.%{sobuild}
 %{!?python_sitelib: %global python_sitelib %(%{__python} \
     -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:       v8
-Version:    %{somajor}.%{sominor}.%{sobuild}.1
+Version:    %{somajor}.%{sominor}.%{sobuild}.5
 %if 0%{?fedora} >= 17
 Epoch:      1
 %endif
-Release:    2%{?dist}
+Release:    1%{?dist}
 Summary:    JavaScript Engine
 Group:      System Environment/Libraries
 License:    BSD
@@ -182,6 +182,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/j*.py*
 
 %changelog
+* Sun Apr  8 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.10.0.5-1
+- update to 3.10.0.5
+
 * Thu Mar 29 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.9.24.1-2
 - bump epoch for fedora >= 17
 
