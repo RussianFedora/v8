@@ -10,13 +10,13 @@
 # For 1.3+, we use the three digit versions
 %global somajor 3
 %global sominor 10
-%global sobuild 2
+%global sobuild 5
 %global sover %{somajor}.%{sominor}.%{sobuild}
 %{!?python_sitelib: %global python_sitelib %(%{__python} \
     -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:       v8
-Version:    %{somajor}.%{sominor}.%{sobuild}.1
+Version:    %{somajor}.%{sominor}.%{sobuild}.0
 %if 0%{?fedora} >= 17
 Epoch:      1
 %endif
@@ -182,6 +182,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/j*.py*
 
 %changelog
+* Thu Apr 26 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.10.5.0-1.R
+- update to 3.10.5.0
+
 * Thu Apr 19 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.10.2.1-1.R
 - update to 3.10.2.1
 
