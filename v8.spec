@@ -10,7 +10,7 @@
 # For 1.3+, we use the three digit versions
 %global somajor 3
 %global sominor 10
-%global sobuild 5
+%global sobuild 6
 %global sover %{somajor}.%{sominor}.%{sobuild}
 %{!?python_sitelib: %global python_sitelib %(%{__python} \
     -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
@@ -182,6 +182,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/j*.py*
 
 %changelog
+* Fri Apr 27 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.10.6.0-1.R
+- update to 3.10.6.0
+
 * Thu Apr 26 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.10.5.0-1.R
 - update to 3.10.5.0
 
