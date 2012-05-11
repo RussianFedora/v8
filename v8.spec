@@ -10,13 +10,13 @@
 # For 1.3+, we use the three digit versions
 %global somajor 3
 %global sominor 10
-%global sobuild 6
+%global sobuild 8
 %global sover %{somajor}.%{sominor}.%{sobuild}
 %{!?python_sitelib: %global python_sitelib %(%{__python} \
     -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:       v8
-Version:    %{somajor}.%{sominor}.%{sobuild}.0
+Version:    %{somajor}.%{sominor}.%{sobuild}.4
 %if 0%{?fedora} >= 17
 Epoch:      1
 %endif
@@ -29,8 +29,6 @@ URL:        http://code.google.com/p/v8
 # Checkout script is Source1
 Source0:    v8.%{version}.tar.lzma
 Source1:    v8-daily-tarball.sh
-# Enable experimental i18n extension that chromium needs
-Patch0:     v8-3.3.10-enable-experimental.patch
 # Remove unnecessary shebangs
 Patch3:     v8-2.5.9-shebangs.patch
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -52,7 +50,6 @@ Development headers and libraries for v8.
 
 %prep
 %setup -q -n %{name}
-#patch0 -p1 -b .experimental
 %patch3 -p1 -b .shebang
 
 #sed -i '/break-iterator.cc/d' src/SConscript
@@ -182,6 +179,10 @@ rm -rf %{buildroot}
 %{python_sitelib}/j*.py*
 
 %changelog
+* Fri May 11 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.10.8.4-1.R
+- update to 3.10.8.4
+- drop old patch
+
 * Fri Apr 27 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.10.6.0-1.R
 - update to 3.10.6.0
 
