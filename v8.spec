@@ -9,14 +9,14 @@
 # For the 1.2 branch, we use 0s here
 # For 1.3+, we use the three digit versions
 %global somajor 3
-%global sominor 10
-%global sobuild 8
+%global sominor 11
+%global sobuild 3
 %global sover %{somajor}.%{sominor}.%{sobuild}
 %{!?python_sitelib: %global python_sitelib %(%{__python} \
     -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:       v8
-Version:    %{somajor}.%{sominor}.%{sobuild}.4
+Version:    %{somajor}.%{sominor}.%{sobuild}.0
 %if 0%{?fedora} >= 17
 Epoch:      1
 %endif
@@ -179,6 +179,36 @@ rm -rf %{buildroot}
 %{python_sitelib}/j*.py*
 
 %changelog
+* Fri May 25 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.11.3.0-1.R
+- update to 3.11.3.0
+- Disable optimization for functions that have scopes that cannot
+  be reconstructed from the context chain. (issue 2071)
+- Define V8_EXPORT to nothing for clients of v8. 
+  (Chromium issue 90078)
+- Correctly check for native error objects. (Chromium issue 2138)
+- Implement map collection for incremental marking. (issue 1465)
+- Added a readbuffer function to d8 that reads a file into an 
+  ArrayBuffer.
+- Fix freebsd build. (V8 issue 2126)
+- Fixed compose-discard crasher from r11524 (issue 2123).
+- Activated new global semantics by default. Global variables can
+  now shadow properties of the global object (ES5.1 erratum).
+- Properly set ElementsKind of empty FAST_DOUBLE_ELEMENTS arrays when
+  transitioning (Chromium issue 117409).
+- Made Error.prototype.name writable again, as required by the spec and
+  the web (Chromium issue 69187).
+- Implemented map collection with incremental marking (issue 1465).
+- Regexp: Fixed overflow in min-match-length calculation
+  (Chromium issue 126412).
+- Fixed crash bug in VisitChoice (Chromium issue 126272).
+- Fixed unsigned-Smi check in MappedArgumentsLookup
+  (Chromium issue 126414).
+- Fixed LiveEdit for function with no locals (issue 825).
+- Fixed register clobbering in LoadIC for interceptors
+  (Chromium issue 125988).
+- Implemented clearing of CompareICs (issue 2102).
+- Performance and stability improvements on all platforms.
+
 * Fri May 11 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.10.8.4-1.R
 - update to 3.10.8.4
 - drop old patch
