@@ -30,7 +30,6 @@ URL:        http://code.google.com/p/v8
 Source0:    v8.%{version}.tar.lzma
 Source1:    v8-daily-tarball.sh
 # Remove unnecessary shebangs
-Patch3:     v8-2.5.9-shebangs.patch
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 ExclusiveArch:    %{ix86} x86_64 arm
 BuildRequires:    scons, readline-devel, libicu-devel
@@ -50,7 +49,6 @@ Development headers and libraries for v8.
 
 %prep
 %setup -q -n %{name}
-%patch3 -p1 -b .shebang
 
 #sed -i '/break-iterator.cc/d' src/SConscript
 #sed -i '/collator.cc/d' src/SConscript
@@ -180,6 +178,8 @@ rm -rf %{buildroot}
 
 %changelog
 * Fri Jun  8 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.11.8.0-1.R
+- update to 3.11.8.0
+- drop patch
 - Avoid overdeep recursion in regexp where a guarded expression 
   with a minimum repetition count is inside another quantifier.
   (Chromium issue 129926)
