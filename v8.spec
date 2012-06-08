@@ -10,7 +10,7 @@
 # For 1.3+, we use the three digit versions
 %global somajor 3
 %global sominor 11
-%global sobuild 3
+%global sobuild 8
 %global sover %{somajor}.%{sominor}.%{sobuild}
 %{!?python_sitelib: %global python_sitelib %(%{__python} \
     -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
@@ -179,6 +179,29 @@ rm -rf %{buildroot}
 %{python_sitelib}/j*.py*
 
 %changelog
+* Fri Jun  8 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.11.8.0-1.R
+- Avoid overdeep recursion in regexp where a guarded expression 
+  with a minimum repetition count is inside another quantifier.
+  (Chromium issue 129926)
+- Fixed missing write barrier in store field stub.
+  (issues 2143, 1465, Chromium issue 129355)
+- Proxies: Fixed receiver for setters inherited from proxies.
+- Proxies: Fixed ToStringArray function so that it does not 
+  reject some keys. (issue 1543)
+- Get better function names in stack traces.
+- Fixed RegExp.prototype.toString for incompatible receivers
+  (issue 1981).
+- Some cleanup to common.gypi. This fixes some host/target 
+  combinations that weren't working in the Make build on Mac.
+- Handle EINTR in socket functions and continue incomplete sends.
+  (issue 2098)
+- Fixed python deprecations.  (issue 1391)
+- Made socket send and receive more robust and return 0 on 
+  failure.  (Chromium issue 15719)
+- Fixed GCC 4.7 (C++11) compilation.  (issue 2136)
+- Set '-m32' option for host and target platforms
+- Performance and stability improvements on all platforms.
+
 * Fri May 25 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.11.3.0-1.R
 - update to 3.11.3.0
 - Disable optimization for functions that have scopes that cannot
