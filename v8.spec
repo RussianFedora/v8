@@ -10,13 +10,13 @@
 # For 1.3+, we use the three digit versions
 %global somajor 3
 %global sominor 11
-%global sobuild 8
+%global sobuild 10
 %global sover %{somajor}.%{sominor}.%{sobuild}
 %{!?python_sitelib: %global python_sitelib %(%{__python} \
     -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:       v8
-Version:    %{somajor}.%{sominor}.%{sobuild}.0
+Version:    %{somajor}.%{sominor}.%{sobuild}.6
 %if 0%{?fedora} >= 17
 Epoch:      1
 %endif
@@ -177,6 +177,21 @@ rm -rf %{buildroot}
 %{python_sitelib}/j*.py*
 
 %changelog
+* Tue Jun 19 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.11.10.6-1.R
+- update to 3.11.10.6
+- Implemented heap profiler memory usage reporting.
+- Preserved error message during finally block in try..finally.
+  (Chromium issue 129171)
+- Fixed EnsureCanContainElements to properly handle double values.
+  (issue 2170)
+- Improved heuristics to keep objects in fast mode with inherited
+  constructors.
+- Performance and stability improvements on all platforms.
+- Implemented ES5-conformant semantics for inherited setters and 
+  read-only properties. Currently behind --es5_readonly flag, 
+  because it breaks WebKit bindings.
+- Exposed last seen heap object id via v8 public api.
+
 * Fri Jun  8 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.11.8.0-1.R
 - update to 3.11.8.0
 - drop patch
